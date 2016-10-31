@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/pixel-admin.min.css" />
+		<script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+		<script type="text/javascript" src='treetable/jquery-ui.min.js'></script>
+	</head>
+	<body>
+	    <div class="panel-body" style="height: 452px">
+			<div class="row">
+				<label class="control-label" style="padding-left: 15px;">已选择部件</label>
+			</div>
+			<div class="panel">
+				<div class="panel-body no-padding-vr ui-sortable" id="selected" style="height: 120px; margin-top: 10px;">
+					
+						<div id="96780842461829624" sort="1" color="dashboard-color-blue" class="widgetSelect dashboard-color-blue ui-sortable-handle">
+							<div style="padding-top: 12px;">我的任务</div>
+						</div>
+					
+						<div id="96571269029333087" sort="2" color="dashboard-color-blue" class="widgetSelect dashboard-color-blue ui-sortable-handle">
+							<div style="padding-top: 12px;">常用链接</div>
+						</div>
+					
+						<div id="96780842461829625" sort="3" color="dashboard-color-blue" class="widgetSelect dashboard-color-blue ui-sortable-handle">
+							<div style="padding-top: 12px;">个人资料</div>
+						</div>
+					
+						<div id="96780842461829626" sort="4" color="dashboard-color-blue" class="widgetSelect dashboard-color-blue ui-sortable-handle">
+							<div style="padding-top: 12px;">法律法规</div>
+						</div>
+					
+						<div id="96780842461829627" sort="5" color="dashboard-color-blue" class="widgetSelect dashboard-color-blue ui-sortable-handle">
+							<div style="padding-top: 12px;">交易提醒</div>
+						</div>
+					
+						<div id="96780842461829628" sort="6" color="dashboard-color-blue" class="widgetSelect dashboard-color-blue ui-sortable-handle">
+							<div style="padding-top: 12px;">公司公告</div>
+						</div>
+					
+						<div id="96780842461829629" sort="7" color="dashboard-color-blue" class="widgetSelect dashboard-color-blue ui-sortable-handle">
+							<div style="padding-top: 12px;">会议管理</div>
+						</div>
+					
+						<div id="96780842461829630" sort="8" color="dashboard-color-blue" class="widgetSelect dashboard-color-blue ui-sortable-handle">
+							<div style="padding-top: 12px;">信息披露</div>
+						</div>
+					
+						<div id="96780842461829631" sort="9" color="dashboard-color-blue" class="widgetSelect dashboard-color-blue ui-sortable-handle">
+							<div style="padding-top: 12px;">函件管理</div>
+						</div>
+					
+				</div>
+			</div>
+			<div class="row">
+				<label class="control-label" style="padding-left: 15px;">未选择部件</label>
+			</div>
+			<div class="panel">
+				<div class="panel-body no-padding-vr ui-sortable" id="unselect" style="height: 120px; margin-top: 10px;">
+					
+				</div>
+			</div>
+			<div class="row text-left">
+				<label class="control-label" style="padding-left: 15px;">注：拖动可选择显示的部件，并调整位置</label>
+			</div>
+			<div class="form-group text-center">
+				<button id="btnWidgetSave" type="button" class="btn btn-primary">保存</button>
+				<button type="button" class="btn btn-default" id="btnClose">关闭</button>
+			</div>
+		</div>
+	<script type="text/javascript">
+		var myHtml = null;
+		$(document).ready(function() {
+			$("#selected").sortable({
+				items: ".widgetSelect",
+				connectWith: $("#unselect"),
+				cursor: "move",
+				update: function(event, ui) {
+					$("#selected > div").each(function(index) {
+						$(this).attr("sort", index+1);
+					});
+				}
+			});
+			$("#unselect").sortable({
+				items: ".widgetSelect",
+				connectWith: $("#selected"),
+				cursor: "move"
+			});
+			$("#btnWidgetSave").bind("click", function() {
+//				var selected = "";
+//				$("#selected > div").each(function(index){
+//					selected = selected + "widgets["+index+"].id=" + $(this).attr("id") + "&";
+//					selected = selected + "widgets["+index+"].widgetSort=" + $(this).attr("sort") + "&";
+//					selected = selected + "widgets["+index+"].widgetColor=" + $(this).attr("color") + "&";
+//				});
+//				ajaxData("/home/widgetSelectSave", selected, function() {
+//					top.window.movePage("/home/init");
+//					closeWin();
+//				});
+				closeWin();
+			});
+			myHtml=$("body").html();
+		
+			// 关闭
+			$("#btnClose").bind("click", function() {
+				closeWin();
+			});
+		});
+		
+		function isWidgetModified() {
+			var currentMyHtml = $("body").html();
+			return currentMyHtml === myHtml;
+		}
+		function closeWin() {
+			// 先得到当前iframe层的索引
+			var index = parent.layer.getFrameIndex(window.name);
+			// 执行关闭
+			parent.layer.close(index);
+		}
+		
+		
+		//ajax
+		function ajaxData(sUrl, oParameters, fSuccess, sContentType, sDataType, fCustomAjaxSetting) {
+			var ajaxSettings = getAjaxGlobalSettings();
+			if (fCustomAjaxSetting != null && fCustomAjaxSetting != undefined) {
+				window[fCustomAjaxSetting(ajaxSettings)];
+			}
+			ajaxSettings.url = contextPath + sUrl;
+			ajaxSettings.data = oParameters;
+			if (sContentType != null && sContentType != undefined) {
+				ajaxSettings.contentType = sContentType;
+			}
+			if (sDataType != null && sDataType != undefined) {
+				ajaxSettings.dataType = sDataType;
+			}
+			var context = new Object();
+			context.dataType = ajaxSettings.dataType
+			context.callBackFunc = fSuccess;
+			ajaxSettings.context = context;
+		    $.ajax(ajaxSettings);
+		}
+		
+		function getAjaxGlobalSettings() {
+			//设置ajax全局请求参数
+			var ajaxSettings = {
+				url:         "",
+				type:        "POST",
+				contentType: "application/x-www-form-urlencoded",
+				dataType:    "json",
+				async:       true,
+				cache:       false,
+				crossDomain: false,
+				global:      false,
+				beforeSend:  globalAjaxBeforeSend,
+				success:     globalAjaxSuccess,
+				error:       globalAjaxError,
+				complete:    globalAjaxComplete
+			}
+			return ajaxSettings;
+		}
+	</script>
+	</body>
+</html>
